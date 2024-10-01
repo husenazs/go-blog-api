@@ -1,23 +1,17 @@
-package main
+package handler
 
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
 
+	"blog-api/internal/models"
+
 	_ "github.com/go-sql-driver/mysql"
 )
-
-type Post struct {
-	ID      int    `json:"id"`
-	Title   string `json:"title"`
-	Content string `json:"body"`
-	Author  string `json:"author"`
-}
 
 var db *sql.DB
 
@@ -34,9 +28,8 @@ func init() {
 	}
 }
 
-var responses []map[string]interface{}
-
-func createPost(w http.ResponseWriter, r *http.Request) {
+// Fungsi CreatePost untuk menambahkan post baru
+func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -45,7 +38,7 @@ func createPost(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	var newPost Post
+	var newPost models.Post
 	err := json.NewDecoder(r.Body).Decode(&newPost)
 	if err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
@@ -74,18 +67,11 @@ func createPost(w http.ResponseWriter, r *http.Request) {
 
 	newPost.ID = int(id)
 	w.WriteHeader(http.StatusCreated)
-
-	// Tambahkan response ke array responses
-	responses = append(responses, map[string]interface{}{
-		"method": r.Method,
-		"path":   r.URL.Path,
-		"status": http.StatusCreated,
-		"data":   newPost,
-	})
-	json.NewEncoder(w).Encode(responses)
+	json.NewEncoder(w).Encode(newPost)
 }
 
-func getPost(w http.ResponseWriter, r *http.Request) {
+// Fungsi GetPost untuk mendapatkan semua post
+func GetPost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
@@ -93,17 +79,17 @@ func getPost(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	rows, err := db.Query("SELECT ID, TITLE, CONTENT FROM POSTS")
+	rows, err := db.Query("SELECT * FROM POSTS")
 	if err != nil {
 		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()
 
-	var posts []Post
+	var posts []models.Post
 	for rows.Next() {
-		var post Post
-		err := rows.Scan(&post.ID, &post.Title, &post.Content)
+		var post models.Post
+		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Author, &post.Created_at, &post.Updated_at)
 		if err != nil {
 			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 			return
@@ -113,7 +99,8 @@ func getPost(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(posts)
 }
 
-func getPostbyID(w http.ResponseWriter, r *http.Request) {
+// Fungsi GetPostbyID untuk mendapatkan post berdasarkan ID
+func GetPostbyID(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
@@ -128,7 +115,7 @@ func getPostbyID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var post Post
+	var post models.Post
 	err = db.QueryRow("SELECT ID, TITLE, CONTENT FROM POSTS WHERE ID = ?", id).Scan(&post.ID, &post.Title, &post.Content)
 	if err == sql.ErrNoRows {
 		http.Error(w, "Post not found", http.StatusNotFound)
@@ -138,18 +125,11 @@ func getPostbyID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Tambahkan response ke array responses
-	responses = append(responses, map[string]interface{}{
-		"method": r.Method,
-		"path":   r.URL.Path,
-		"status": http.StatusCreated,
-		"data":   post,
-	})
-
-	json.NewEncoder(w).Encode(responses)
+	json.NewEncoder(w).Encode(post)
 }
 
-func updatePost(w http.ResponseWriter, r *http.Request) {
+// Fungsi UpdatePost untuk memperbarui post
+func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPut {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
@@ -164,7 +144,7 @@ func updatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var post Post
+	var post models.Post
 	err = json.NewDecoder(r.Body).Decode(&post)
 	if err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
@@ -195,26 +175,5 @@ func updatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var arrReposnses []map[string]interface{}
-	arrReposnses = append(arrReposnses, map[string]interface{}{
-		"method": r.Method,
-		"path":   r.URL.Path,
-		"status": http.StatusOK,
-		"data":   post,
-	})
-	json.NewEncoder(w).Encode(arrReposnses)
-
-}
-
-func main() {
-	http.HandleFunc("/posts", getPost)
-	http.HandleFunc("/posts/", getPostbyID)
-	http.HandleFunc("/posts/create", createPost)
-	http.HandleFunc("/posts/update/", updatePost)
-
-	fmt.Println("Server started on port 8080")
-	err := http.ListenAndServe(":8080", nil)
-	if err != nil {
-		log.Fatal("Server error:", err)
-	}
+	json.NewEncoder(w).Encode(post)
 }
