@@ -110,15 +110,7 @@ func getPost(w http.ResponseWriter, r *http.Request) {
 		}
 		posts = append(posts, post)
 	}
-
-	// Tambahkan response ke array responses
-	responses = append(responses, map[string]interface{}{
-		"method": r.Method,
-		"path":   r.URL.Path,
-		"status": http.StatusCreated,
-		"data":   posts,
-	})
-	json.NewEncoder(w).Encode(responses)
+	json.NewEncoder(w).Encode(posts)
 }
 
 func getPostbyID(w http.ResponseWriter, r *http.Request) {
@@ -146,7 +138,15 @@ func getPostbyID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(post)
+	// Tambahkan response ke array responses
+	responses = append(responses, map[string]interface{}{
+		"method": r.Method,
+		"path":   r.URL.Path,
+		"status": http.StatusCreated,
+		"data":   post,
+	})
+
+	json.NewEncoder(w).Encode(responses)
 }
 
 func updatePost(w http.ResponseWriter, r *http.Request) {
@@ -205,7 +205,6 @@ func updatePost(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(arrReposnses)
 
 }
-
 
 func main() {
 	http.HandleFunc("/posts", getPost)
