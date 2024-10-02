@@ -1,18 +1,24 @@
 package main
 
 import (
+	"blog-api/internal/handler"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
-
-	"blog-api/internal/handler"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
 	r := mux.NewRouter()
-
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		t, err := template.ParseFiles("../static/template/index.html")
+		if err != nil {
+			log.Fatal("Error parsing template:", err)
+		}
+		t.Execute(w, nil)
+	})
 	r.HandleFunc("/posts", handler.GetPost).Methods("GET")
 	r.HandleFunc("/posts/{id}", handler.GetPostbyID).Methods("GET")
 	r.HandleFunc("/posts/create", handler.CreatePost).Methods("POST")

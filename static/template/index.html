@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog Index</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        width: 80%;
+        margin: 20px auto;
+      }
+
+      .post-card {
+        background-color: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+      }
+
+      .post-card:hover {
+        transform: scale(1.02);
+      }
+
+      .post-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+
+      .post-content {
+        padding: 15px;
+      }
+
+      .post-title {
+        font-size: 1.5em;
+        margin: 0;
+        color: #333;
+        text-decoration: none;
+      }
+
+      .post-title:hover {
+        color: #007bff;
+      }
+
+      .post-meta {
+        font-size: 0.9em;
+        color: #888;
+        margin-top: 10px;
+      }
+
+      .post-meta span {
+        margin-right: 15px;
+      }
+
+      .post-author {
+        font-weight: bold;
+        color: #555;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container" id="post-container">
+      <!-- Post akan dimuat di sini -->
+    </div>
+
+    <script>
+      // Memuat data postingan dari API
+      fetch("http://localhost:8080/posts")
+        .then((response) => response.json())
+        .then((data) => {
+          const container = document.getElementById("post-container");
+          data.forEach((item) => {
+            const postCard = document.createElement("div");
+            postCard.classList.add("post-card");
+
+            // Membuat elemen gambar
+            const img = document.createElement("img");
+            img.src = `https://picsum.photos/200/300?random=${Math.floor(
+              Math.random() * 1000
+            )}`;
+            img.alt = "Post Thumbnail";
+
+            const link = document.createElement("a");
+            link.href = `/post/${item.id}`;
+            link.appendChild(img);
+
+            const postContent = document.createElement("div");
+            postContent.classList.add("post-content");
+
+            const postTitle = document.createElement("a");
+            postTitle.classList.add("post-title");
+            postTitle.href = `/post/${item.id}`;
+            postTitle.textContent = item.title;
+
+            const postMeta = document.createElement("div");
+            postMeta.classList.add("post-meta");
+
+            // Membuat elemen penulis
+            const authorSpan = document.createElement("span");
+            authorSpan.textContent = `Author: ${item.author}`;
+
+            // Membuat elemen waktu
+            const timeSpan = document.createElement("span");
+            timeSpan.textContent = `Time: ${item.created_at}`;
+
+            postMeta.appendChild(authorSpan);
+            postMeta.appendChild(timeSpan);
+            postContent.appendChild(postTitle);
+            postContent.appendChild(postMeta);
+            postCard.appendChild(link);
+            postCard.appendChild(postContent);
+            container.appendChild(postCard);
+          });
+        })
+        .catch((error) => console.error("Error fetching posts:", error));
+    </script>
+  </body>
+</html>
