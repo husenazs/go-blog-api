@@ -66,7 +66,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Buat JWT token
-	expirationTime := time.Now().Add(30 * time.Minute)
+	expirationTime := time.Now().Add(5 * time.Minute)
 	claims := &Claims{
 		Username: creds.Username,
 		StandardClaims: jwt.StandardClaims{
@@ -154,11 +154,27 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = db.Exec("INSERT INTO USERS (USERNAME, PASSWORD) VALUES (?, ?)", creds.Username, hashedPassword)
+	// Insert post into database
+	stmt, err := db.Prepare("INSERT INTO USERS (USERNAME, PASSWORD) VALUES (?, ?)")
 	if err != nil {
-		http.Error(w, "Error creating user", http.StatusInternalServerError)
+		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(creds.Username, hashedPassword)
+	if err != nil {
+		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	json.NewEncoder(w).Encode(map[string]string{"message": "User registered successfully"})
 }
+
+func Logout(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:    "token",
+		Value:   "",
+		Expires: time.Now().Add(-time.Hour),
+	})
+}	

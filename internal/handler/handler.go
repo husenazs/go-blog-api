@@ -121,7 +121,7 @@ func GetPostbyID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var post models.Post
-	err = db.QueryRow("SELECT * FROM POSTS WHERE ID = ?", id).Scan(&post.Post_ID, &post.Title, &post.Content)
+	err = db.QueryRow("SELECT * FROM POSTS WHERE ID = ?", id).Scan(&post.Post_ID, &post.Title, &post.Content, &post.Author, &post.Created_at, &post.Updated_at)
 	if err == sql.ErrNoRows {
 		http.Error(w, "Post not found", http.StatusNotFound)
 		return
