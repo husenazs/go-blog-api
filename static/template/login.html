@@ -9,26 +9,54 @@
     />
     <style>
       body {
-        background-color: #212121;
-        color: white;
+        background-color: #f7f7f7; /* Warna latar belakang terang */
+        color: #333; /* Warna teks gelap untuk kontras yang lebih baik */
       }
 
       .container {
-        width: 300px;
-        margin: 100px auto;
-        padding: 20px;
-        background-color: #424242;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 400px; /* Lebar kontainer yang sedikit lebih besar */
+        margin: 100px auto; /* Margin atas untuk penempatan di tengah */
+        padding: 40px; /* Padding untuk ruang di dalam kontainer */
+        background-color: #ffffff; /* Warna latar belakang putih */
+        border-radius: 10px; /* Sudut membulat */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Bayangan halus */
+      }
+
+      h4 {
+        margin-bottom: 20px; /* Jarak antara judul dan form */
+        color: #00a8e8; /* Warna judul yang mencolok */
+        text-align: center; /* Rata tengah untuk judul */
       }
 
       .input-field {
-        margin: 10px 0;
+        margin: 20px 0; /* Jarak antara input */
       }
 
       .btn {
-        width: 100%;
-        margin-top: 20px;
+        width: 100%; /* Tombol mengisi lebar kontainer */
+        margin-top: 20px; /* Jarak atas tombol */
+        background-color: #00a8e8; /* Warna tombol */
+        transition: background-color 0.3s; /* Transisi saat hover */
+      }
+
+      .btn:hover {
+        background-color: #008cbf; /* Warna tombol saat hover */
+      }
+
+      /* Link registrasi */
+      .register-link {
+        text-align: center; /* Rata tengah untuk link registrasi */
+        margin-top: 15px; /* Jarak atas untuk link registrasi */
+        font-size: 14px; /* Ukuran font yang lebih kecil */
+      }
+
+      .register-link a {
+        color: #00a8e8; /* Warna link registrasi */
+        text-decoration: none; /* Tanpa garis bawah */
+      }
+
+      .register-link a:hover {
+        text-decoration: underline; /* Garis bawah saat hover */
       }
     </style>
   </head>
@@ -43,6 +71,7 @@
             id="username"
             name="username"
             placeholder="Username"
+            required
           />
         </div>
         <div class="input-field">
@@ -51,11 +80,15 @@
             id="password"
             name="password"
             placeholder="Password"
+            required
           />
         </div>
         <button class="btn waves-effect waves-light" type="submit">
           Login
         </button>
+        <div class="register-link">
+          <p>Don't have an account? <a href="#">Register here</a></p>
+        </div>
       </form>
     </div>
     <script>

@@ -3,126 +3,176 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Blog Index</title>
+    <title>Minimalist Modern Blog</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- <link rel="stylesheet" href="style.css"> -->
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f9f9f9;
+      /* General Styles */
+      * {
         margin: 0;
         padding: 0;
+        box-sizing: border-box;
       }
 
-      .container {
-        width: 80%;
-        margin: 20px auto;
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f7f7f7;
+        color: #333;
+        line-height: 1.6;
+      }
+
+      /* Navbar */
+      .navbar {
+        background-color: #333;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .navbar .logo {
+        font-size: 24px;
+        font-weight: 700;
+      }
+
+      .navbar nav ul {
+        list-style: none;
+        display: flex;
+      }
+
+      .navbar nav ul li {
+        margin-left: 20px;
+      }
+
+      .navbar nav ul li a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .navbar nav ul li a:hover {
+        text-decoration: underline;
+      }
+
+      /* Posts Section */
+      .posts-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 40px;
+        max-width: 1200px;
+        margin: auto;
       }
 
       .post-card {
-        background-color: #fff;
+        background-color: white;
+        padding: 20px;
         border-radius: 8px;
-        overflow: hidden;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s;
-      }
-
-      .post-card:hover {
-        transform: scale(1.02);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
       }
 
       .post-card img {
         width: 100%;
-        height: 200px;
-        object-fit: cover;
+        border-radius: 8px;
       }
 
-      .post-content {
-        padding: 15px;
-      }
-
-      .post-title {
-        font-size: 1.5em;
-        margin: 0;
+      .post-card h2 {
+        font-size: 24px;
+        margin: 20px 0;
+        font-weight: 700;
         color: #333;
+      }
+
+      .post-card p {
+        font-size: 16px;
+        color: #666;
+      }
+
+      .post-card .btn {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #00a8e8;
+        color: white;
+        border: none;
+        border-radius: 4px;
         text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
       }
 
-      .post-title:hover {
-        color: #007bff;
+      .post-card .btn:hover {
+        background-color: #008cbf;
       }
 
-      .post-meta {
-        font-size: 0.9em;
-        color: #888;
-        margin-top: 10px;
-      }
-
-      .post-meta span {
-        margin-right: 15px;
-      }
-
-      .post-author {
-        font-weight: bold;
-        color: #555;
+      /* Footer */
+      .footer {
+        background-color: #333;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        margin-top: 40px;
       }
     </style>
   </head>
-
   <body>
-    <div class="container" id="post-container">
-      <!-- Post akan dimuat di sini -->
-    </div>
+    <!-- Header -->
+    <header class="navbar">
+      <div class="logo">GoBlog</div>
+      <nav>
+        <ul>
+          <li><a href="/login">Login</a></li>
+          <li><a href="/logout">Logout</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Main content (Posts) -->
+    <main class="posts-section">
+      <!-- Add more posts as needed -->
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>&copy; 2024 MyBlog. All rights reserved.</p>
+    </footer>
 
     <script>
-      // Memuat data postingan dari API
-      fetch("http://localhost:8080/posts")
+      const postsSection = document.querySelector(".posts-section");
+      const posts = fetch("http://localhost:8080/posts", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
         .then((response) => response.json())
         .then((data) => {
-          const container = document.getElementById("post-container");
-          data.forEach((item) => {
-            const postCard = document.createElement("div");
-            postCard.classList.add("post-card");
-
-            // Membuat elemen gambar
-            const img = document.createElement("img");
-            img.src = `https://picsum.photos/200/300?random=${Math.floor(
-              Math.random() * 1000
-            )}`;
-            img.alt = "Post Thumbnail";
-
-            const link = document.createElement("a");
-            link.href = `/post/${item.id}`;
-            link.appendChild(img);
-
-            const postContent = document.createElement("div");
-            postContent.classList.add("post-content");
-
-            const postTitle = document.createElement("a");
-            postTitle.classList.add("post-title");
-            postTitle.href = `/post/${item.id}`;
-            postTitle.textContent = item.title;
-
-            const postMeta = document.createElement("div");
-            postMeta.classList.add("post-meta");
-
-            // Membuat elemen penulis
-            const authorSpan = document.createElement("span");
-            authorSpan.textContent = `Author: ${item.author}`;
-
-            // Membuat elemen waktu
-            const timeSpan = document.createElement("span");
-            timeSpan.textContent = `Time: ${item.created_at}`;
-
-            postMeta.appendChild(authorSpan);
-            postMeta.appendChild(timeSpan);
-            postContent.appendChild(postTitle);
-            postContent.appendChild(postMeta);
-            postCard.appendChild(link);
-            postCard.appendChild(postContent);
-            container.appendChild(postCard);
-          });
+          return data;
         })
-        .catch((error) => console.error("Error fetching posts:", error));
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+
+      posts.then((data) => {
+        data.forEach((post) => {
+          const postCard = document.createElement("article");
+          postCard.classList.add("post-card");
+          postCard.innerHTML = `
+            <img src="https://picsum.photos/200/300?random=${Math.floor(
+              Math.random() * 1000
+            )}" alt="Post Thumbnail" />
+            <h2>${post.title}</h2>
+            <p>${post.body}</p>
+            <a href="#" class="btn">Read More</a>
+          `;
+          postsSection.appendChild(postCard);
+        });
+      });
     </script>
   </body>
 </html>
