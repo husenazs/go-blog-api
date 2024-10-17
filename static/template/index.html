@@ -8,7 +8,6 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap"
       rel="stylesheet"
     />
-    <!-- <link rel="stylesheet" href="style.css"> -->
     <style>
       /* General Styles */
       * {
@@ -134,45 +133,26 @@
 
     <!-- Main content (Posts) -->
     <main class="posts-section">
-      <!-- Add more posts as needed -->
+      {{range .Posts}}
+      <!-- Mulai looping data dari API -->
+      <article class="post-card">
+        <img
+          src="https://picsum.photos/200/300?random={{.Post_ID}}"
+          alt="Post Thumbnail"
+        />
+        <h2>{{.Title}}</h2>
+        <p>{{.Author}}</p>
+        <p>{{.Created_at}}</p>
+        <p>{{.Content}}</p>
+        <a href="#" class="btn">Read More</a>
+      </article>
+      {{end}}
+      <!-- Akhir looping data dari API -->
     </main>
 
     <!-- Footer -->
     <footer class="footer">
       <p>&copy; 2024 MyBlog. All rights reserved.</p>
     </footer>
-
-    <script>
-      const postsSection = document.querySelector(".posts-section");
-      const posts = fetch("http://localhost:8080/posts", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          return data;
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-
-      posts.then((data) => {
-        data.forEach((post) => {
-          const postCard = document.createElement("article");
-          postCard.classList.add("post-card");
-          postCard.innerHTML = `
-            <img src="https://picsum.photos/200/300?random=${Math.floor(
-              Math.random() * 1000
-            )}" alt="Post Thumbnail" />
-            <h2>${post.title}</h2>
-            <p>${post.body}</p>
-            <a href="#" class="btn">Read More</a>
-          `;
-          postsSection.appendChild(postCard);
-        });
-      });
-    </script>
   </body>
 </html>
